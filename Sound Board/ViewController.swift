@@ -22,6 +22,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         
         tableView.dataSource = self
         tableView.delegate = self
+        
+
     }
     override func viewWillAppear(_ animated: Bool) {
         let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
@@ -52,6 +54,24 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         
         tableView.deselectRow(at: indexPath, animated: true)
         
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        
+        if editingStyle == .delete{
+            let sound = sounds[indexPath.row]
+            let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+            
+            context.delete(sound)
+            
+            (UIApplication.shared.delegate as! AppDelegate).saveContext()
+            
+            do {
+                sounds = try context.fetch(Sound.fetchRequest())
+                tableView.reloadData()
+            } catch{}
+            
+        }
     }
 }
 
